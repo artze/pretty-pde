@@ -12,7 +12,23 @@ export function activate(context: vscode.ExtensionContext) {
 
         // Handle assignment statement
         if (line.text.match(/\s*=\s*/)) {
-          edit.push(vscode.TextEdit.replace(line.range, `${line.text};`));
+          const lhs = line.text.substring(0, line.text.indexOf("=")).trim();
+          const rhs = line.text
+            .substring(line.text.indexOf("=") + 1)
+            .trim()
+            .replace(/;/g, "");
+          const r = `${lhs} = ${rhs};`;
+          edit.push(
+            vscode.TextEdit.replace(
+              line.range.with(
+                line.range.start.translate(
+                  0,
+                  line.firstNonWhitespaceCharacterIndex
+                )
+              ),
+              r
+            )
+          );
         }
       }
 
