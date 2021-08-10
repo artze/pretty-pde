@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { handleStatement } from "./lib/handleStatement";
+import { handleLine } from "./lib/handleLine";
 
 export function activate(context: vscode.ExtensionContext) {
   vscode.languages.registerDocumentFormattingEditProvider("pde", {
@@ -7,9 +7,26 @@ export function activate(context: vscode.ExtensionContext) {
       document: vscode.TextDocument
     ): vscode.TextEdit[] {
       let edits: vscode.TextEdit[] = [];
+      let indentLevel = 0;
 
-      const editsFromHandleStatement = handleStatement(document);
-      edits = edits.concat(editsFromHandleStatement);
+      for (let i = 0; i < document.lineCount; i++) {
+        const line = document.lineAt(i);
+
+        const lineEdits = handleLine({
+          line,
+          indentLevel,
+        });
+
+        edits = edits.concat(lineEdits);
+
+        if (/{/.test(line.text)) {
+          indentLevel++;
+        }
+
+        if (/}/.test(line.text)) {
+          indentLevel--;
+        }
+      }
 
       return edits;
     },
