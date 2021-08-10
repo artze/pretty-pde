@@ -53,7 +53,8 @@ export function handleLine({
     !line.text.includes("}") &&
     !/\s*/.test(line.text)
   ) {
-    const r = prependSpaces({ indentLevel, content: line.text.trim() });
+    const content = line.text.trim().replace(/;/g, "");
+    const r = prependSpaces({ indentLevel, content: `${content};` });
 
     edits.push(vscode.TextEdit.delete(line.range));
     edits.push(vscode.TextEdit.insert(line.range.start, r));

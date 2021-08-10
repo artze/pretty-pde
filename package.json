@@ -2,8 +2,12 @@
   "name": "pretty-pde",
   "displayName": "pretty-pde",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "artze",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/artze/pretty-pde"
+  },
   "engines": {
     "vscode": "^1.59.0"
   },
