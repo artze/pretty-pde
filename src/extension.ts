@@ -19,11 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
 
         edits = edits.concat(lineEdits);
 
-        if (/{/.test(line.text)) {
+        if (/{$/.test(line.text) || /\($/.test(line.text)) {
           indentLevel++;
         }
 
-        if (/}/.test(line.text)) {
+        if (/^\s*}/.test(line.text) || /^\s*\)/.test(line.text)) {
           indentLevel--;
         }
       }
