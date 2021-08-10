@@ -48,11 +48,7 @@ export function handleLine({
   }
 
   // Handle general statements
-  if (
-    !line.text.includes("{") &&
-    !line.text.includes("}") &&
-    !/\s*/.test(line.text)
-  ) {
+  if (!line.text.includes("{") && !line.text.includes("}")) {
     const content = line.text.trim().replace(/;/g, "");
     const r = prependSpaces({ indentLevel, content: `${content};` });
 
