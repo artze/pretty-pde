@@ -1,22 +1,34 @@
 import * as vscode from "vscode";
+import { handleLine } from "./lib/handleLine";
 
 export function activate(context: vscode.ExtensionContext) {
   vscode.languages.registerDocumentFormattingEditProvider("pde", {
     provideDocumentFormattingEdits(
       document: vscode.TextDocument
     ): vscode.TextEdit[] {
-      const edit: vscode.TextEdit[] = [];
+      let edits: vscode.TextEdit[] = [];
+      let indentLevel = 0;
 
       for (let i = 0; i < document.lineCount; i++) {
         const line = document.lineAt(i);
 
-        // Handle assignment statement
-        if (line.text.match(/\s*=\s*/)) {
-          edit.push(vscode.TextEdit.replace(line.range, `${line.text};`));
+        const lineEdits = handleLine({
+          line,
+          indentLevel,
+        });
+
+        edits = edits.concat(lineEdits);
+
+        if (/{/.test(line.text)) {
+          indentLevel++;
+        }
+
+        if (/}/.test(line.text)) {
+          indentLevel--;
         }
       }
 
-      return edit;
+      return edits;
     },
   });
 }
