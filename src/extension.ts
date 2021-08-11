@@ -8,13 +8,29 @@ export function activate(context: vscode.ExtensionContext) {
     ): vscode.TextEdit[] {
       let edits: vscode.TextEdit[] = [];
       let indentLevel = 0;
+      let lParenCount = 0;
+      let rParenCount = 0;
 
       for (let i = 0; i < document.lineCount; i++) {
         const line = document.lineAt(i);
 
+        if (line.text.match(/\(/g)) {
+          lParenCount += line.text.match(/\(/g)!.length;
+        }
+
+        if (line.text.match(/\)/g)) {
+          rParenCount += line.text.match(/\)/g)!.length;
+        }
+
+        if (/^\s*\)/.test(line.text)) {
+          indentLevel--;
+        }
+
         const lineEdits = handleLine({
           line,
           indentLevel,
+          lParenCount,
+          rParenCount,
         });
 
         edits = edits.concat(lineEdits);
@@ -23,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
           indentLevel++;
         }
 
-        if (/^\s*}/.test(line.text) || /^\s*\)/.test(line.text)) {
+        if (/^\s*}/.test(line.text)) {
           indentLevel--;
         }
       }

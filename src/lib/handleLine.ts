@@ -18,9 +18,13 @@ function prependSpaces({
 export function handleLine({
   line,
   indentLevel,
+  lParenCount,
+  rParenCount,
 }: {
   line: vscode.TextLine;
   indentLevel: number;
+  lParenCount: number;
+  rParenCount: number;
 }): vscode.TextEdit[] {
   const edits: vscode.TextEdit[] = [];
 
@@ -48,14 +52,12 @@ export function handleLine({
   }
 
   // Handle general statements
-  if (
-    !/{$/.test(line.text) &&
-    !/^\s*}/.test(line.text) &&
-    !/\($/.test(line.text) &&
-    !/^\s*\)/.test(line.text)
-  ) {
-    const content = line.text.trim().replace(/;/g, "");
-    const r = prependSpaces({ indentLevel, content: `${content};` });
+  if (!/{$/.test(line.text) && !/^\s*}/.test(line.text)) {
+    let content = line.text.trim().replace(/;/g, "");
+    if (lParenCount === rParenCount) {
+      content += ";";
+    }
+    const r = prependSpaces({ indentLevel, content });
 
     edits.push(vscode.TextEdit.delete(line.range));
     edits.push(vscode.TextEdit.insert(line.range.start, r));
