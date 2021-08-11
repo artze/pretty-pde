@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
           rParenCount += line.text.match(/\)/g)!.length;
         }
 
-        if (/^\s*\)/.test(line.text)) {
+        if (/^\s*}/.test(line.text) || /^\s*\)/.test(line.text)) {
           indentLevel--;
         }
 
@@ -37,10 +37,6 @@ export function activate(context: vscode.ExtensionContext) {
 
         if (/{$/.test(line.text) || /\($/.test(line.text)) {
           indentLevel++;
-        }
-
-        if (/^\s*}/.test(line.text)) {
-          indentLevel--;
         }
       }
 

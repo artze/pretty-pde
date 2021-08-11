@@ -51,19 +51,19 @@ export function handleLine({
     return edits;
   }
 
-  // Handle general statements
-  if (!/{$/.test(line.text) && !/^\s*}/.test(line.text)) {
-    let content = line.text.trim().replace(/;/g, "");
-    if (lParenCount === rParenCount) {
-      content += ";";
-    }
-    const r = prependSpaces({ indentLevel, content });
-
-    edits.push(vscode.TextEdit.delete(line.range));
-    edits.push(vscode.TextEdit.insert(line.range.start, r));
-
-    return edits;
+  // Catch all
+  let content = line.text.trim().replace(/;/g, "");
+  if (
+    lParenCount === rParenCount &&
+    !/{$/.test(line.text) &&
+    !/^\s*}/.test(line.text)
+  ) {
+    content += ";";
   }
+  const r = prependSpaces({ indentLevel, content });
+
+  edits.push(vscode.TextEdit.delete(line.range));
+  edits.push(vscode.TextEdit.insert(line.range.start, r));
 
   return edits;
 }
