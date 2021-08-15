@@ -38,7 +38,11 @@ export function handleLine({
       .substring(line.text.indexOf("=") + 1)
       .trim()
       .replace(/;/g, "");
-    const r = prependSpaces({ indentLevel, content: `${lhs} ${op} ${rhs};` });
+    let content = `${lhs} ${op} ${rhs}`;
+    if (!/\(/.test(line.text)) {
+      content += ";";
+    }
+    const r = prependSpaces({ indentLevel, content });
 
     edits.push(vscode.TextEdit.delete(line.range));
     edits.push(vscode.TextEdit.insert(line.range.start, r));
