@@ -29,9 +29,7 @@ export function handleLine({
   const edits: vscode.TextEdit[] = [];
 
   // Handle assignment operators =, +=, -=, *=, /=
-  if (
-    /[+\-*\/]?=/.test(line.text)
-  ) {
+  if (/[+\-*\/]?=/.test(line.text)) {
     const opMatch = /[+\-*\/]?=/.exec(line.text);
     const op = opMatch![0];
     const opIndex = opMatch!.index;
@@ -40,7 +38,7 @@ export function handleLine({
       .substring(line.text.indexOf("=") + 1)
       .trim()
       .replace(/;/g, "");
-    const r = prependSpaces({indentLevel, content: `${lhs} ${op} ${rhs};`});
+    const r = prependSpaces({ indentLevel, content: `${lhs} ${op} ${rhs};` });
 
     edits.push(vscode.TextEdit.delete(line.range));
     edits.push(vscode.TextEdit.insert(line.range.start, r));
