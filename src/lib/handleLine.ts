@@ -28,14 +28,19 @@ export function handleLine({
 }): vscode.TextEdit[] {
   const edits: vscode.TextEdit[] = [];
 
-  // Handle assignments
-  if (line.text.match(/\s*=\s*/)) {
-    const lhs = line.text.substring(0, line.text.indexOf("=")).trim();
+  // Handle assignment operators =, +=, -=, *=, /=
+  if (
+    /[+\-*\/]?=/.test(line.text)
+  ) {
+    const opMatch = /[+\-*\/]?=/.exec(line.text);
+    const op = opMatch![0];
+    const opIndex = opMatch!.index;
+    const lhs = line.text.substring(0, opIndex).trim();
     const rhs = line.text
       .substring(line.text.indexOf("=") + 1)
       .trim()
       .replace(/;/g, "");
-    const r = prependSpaces({ indentLevel, content: `${lhs} = ${rhs};` });
+    const r = prependSpaces({indentLevel, content: `${lhs} ${op} ${rhs};`});
 
     edits.push(vscode.TextEdit.delete(line.range));
     edits.push(vscode.TextEdit.insert(line.range.start, r));
