@@ -39,7 +39,7 @@ export function handleLine({
       .trim()
       .replace(/;/g, "");
     let content = `${lhs} ${op} ${rhs}`;
-    if (!/\(/.test(line.text)) {
+    if (!/\($/.test(line.text)) {
       content += ";";
     }
     const r = prependSpaces({ indentLevel, content });
