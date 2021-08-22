@@ -28,6 +28,18 @@ export function handleLine({
 }): vscode.TextEdit[] {
   const edits: vscode.TextEdit[] = [];
 
+  // Handle for loop statement
+  if (/^\s*for\s*\(.+\)/.test(line.text)) {
+    const forArg = /\(([^)]+)\)/.exec(line.text)![0];
+    const content = `for ${forArg} {`;
+    const r = prependSpaces({ indentLevel, content });
+
+    edits.push(vscode.TextEdit.delete(line.range));
+    edits.push(vscode.TextEdit.insert(line.range.start, r));
+
+    return edits;
+  }
+
   // Handle assignment operators =, +=, -=, *=, /=
   if (/[+\-*\/]?=/.test(line.text)) {
     const opMatch = /[+\-*\/]?=/.exec(line.text);
