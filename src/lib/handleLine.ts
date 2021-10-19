@@ -40,6 +40,25 @@ export function handleLine({
     return edits;
   }
 
+  // Handle comparison operators ==, >=, <=
+  if (/[=><]=/.test(line.text)) {
+    const opMatch = /[=><]=/.exec(line.text);
+    const op = opMatch![0];
+    const opIndex = opMatch!.index;
+    const lhs = line.text.substring(0, opIndex).trim();
+    const rhs = line.text
+      .substring(opIndex + 2)
+      .trim()
+      .replace(/;/g, "");
+    let content = `${lhs} ${op} ${rhs}`;
+    const r = prependSpaces({ indentLevel, content });
+
+    edits.push(vscode.TextEdit.delete(line.range));
+    edits.push(vscode.TextEdit.insert(line.range.start, r));
+
+    return edits;
+  }
+
   // Handle assignment operators =, +=, -=, *=, /=
   if (/[+\-*\/]?=/.test(line.text)) {
     const opMatch = /[+\-*\/]?=/.exec(line.text);
